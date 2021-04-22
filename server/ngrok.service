@@ -1,0 +1,16 @@
+[Unit]
+Description=ngrok
+After=network.target
+
+[Service]
+ExecStart=$PYTHONENV/python $INSTALLDIR/server/ngrok_service.py
+ExecReload=/bin/kill -HUP $MAINPID
+KillMode=process
+IgnoreSIGPIPE=true
+Restart=always
+RestartSec=3
+Type=simple
+
+[Install]
+WantedBy=multi-user.target
+
