@@ -1,4 +1,5 @@
 # ngrok_url
+NGROK provides a public endpoint to allow a client to connect to a server with no public-facing IP address. If you are on a free subscription, this endpoint will change when you restart the service. This little hack automates the server such that it updates the new endpoint URL on a Google spreadsheet, and the client-side can use the URL obtained from the spreadsheet to connect to the server.
 
 ## Requirements
 
