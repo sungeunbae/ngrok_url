@@ -2,9 +2,10 @@ import gspread
 from os.path import join, dirname,realpath
 from oauth2client.service_account import ServiceAccountCredentials
 import argparse
+from config import google_credential_file
 
 scope = ['https://spreadsheets.google.com/feeds','https://www.googleapis.com/auth/drive']
-creds = ServiceAccountCredentials.from_json_keyfile_name(join(dirname(realpath(__file__)),'vejgarden-4efd839296c1.json'), scope)
+creds = ServiceAccountCredentials.from_json_keyfile_name(join(dirname(realpath(__file__)),google_credential_file), scope)
 
 
 if __name__ == "__main__":
