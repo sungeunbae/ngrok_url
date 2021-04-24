@@ -1,4 +1,4 @@
 #!/bin/bash
 DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )"
-ssh `python $DIR/get_ngrok_url.py`
+ssh -o ServerAliveInterval=180 -o ServerAliveCountMax=2 `python $DIR/get_ngrok_url.py`
 
