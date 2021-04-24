@@ -1,0 +1,16 @@
+#!/bin/bash
+DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )"
+if [ "$#" -ne 2 ]; then
+    echo "Usage: $0 src dest"
+    exit
+fi
+res=`python $DIR/get_ngrok_url.py --scp`
+FROM=$1
+TO=$2
+PORT=`echo $res |awk '{print $1" "$2}'`
+URL=`echo $res |awk '{print $3}'`
+cmd="scp -r $PORT $FROM $URL:$TO"
+echo $cmd
+$cmd
+
+
