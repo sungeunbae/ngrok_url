@@ -2,7 +2,8 @@ import gspread
 from os.path import join, dirname,realpath
 from oauth2client.service_account import ServiceAccountCredentials
 import argparse
-from config import google_credential_file
+import socket
+from config import google_credential_file,USERID
 
 scope = ['https://spreadsheets.google.com/feeds','https://www.googleapis.com/auth/drive']
 creds = ServiceAccountCredentials.from_json_keyfile_name(join(dirname(realpath(__file__)),google_credential_file), scope)
@@ -14,13 +15,12 @@ if __name__ == "__main__":
     args = parser.parse_args()
 
     client = gspread.authorize(creds)
-    sheet = client.open("Rpi Ngrok URL").sheet1
+    sheet = client.open("ngrok1p").sheet1
 
-    url=sheet.acell('A1').value
-    #print(url)
-    new_url, port = url.split("//")[1].split(":")
+    ip=sheet.acell('B1').value
+    port=sheet.acell('C1').value
     if args.scp:
-        print("-P {} pi@{}".format(port, new_url))
+        print("-P {} {}@{}".format(port, USERID, ip))
     else:
-        print("pi@{} -p {}".format(new_url, port))
+        print("{}@{} -p {}".format(USERID,ip, port))
 
