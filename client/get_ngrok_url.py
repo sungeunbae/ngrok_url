@@ -1,12 +1,6 @@
-import gspread
-from os.path import join, dirname,realpath
-from oauth2client.service_account import ServiceAccountCredentials
 import argparse
-import socket
-from config import google_credential_file,USERID
-
-scope = ['https://spreadsheets.google.com/feeds','https://www.googleapis.com/auth/drive']
-creds = ServiceAccountCredentials.from_json_keyfile_name(join(dirname(realpath(__file__)),google_credential_file), scope)
+import requests,json
+from config import USERID,GLITCH_URL
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(add_help=True)
@@ -14,11 +8,12 @@ if __name__ == "__main__":
 
     args = parser.parse_args()
 
-    client = gspread.authorize(creds)
-    sheet = client.open("ngrok1p").sheet1
+    response=requests.get(f"{GLITCH_URL}/messages")
+    #reponse eg: {"chat":[{"id":1,"message":"4.tcp.ngrok.io|3.131.147.49|17526|2022-09-06 13:44:43"}]}
+    message=json.loads(response.content.decode('utf-8'))['chat'][0]['message'].split('|')
 
-    ip=sheet.acell('B1').value
-    port=sheet.acell('C1').value
+    _,ip,port,_=message
+
     if args.scp:
         print("-P {} {}@{}".format(port, USERID, ip))
     else:
