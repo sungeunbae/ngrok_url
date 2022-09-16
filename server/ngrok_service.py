@@ -1,20 +1,15 @@
 from pyngrok import ngrok
-import time
 import os
 
-import gspread
-from os.path import join, dirname,realpath
-from oauth2client.service_account import ServiceAccountCredentials
 from datetime import datetime
-from config import google_credential_file,ngrok_token
+import requests,json
 import socket
 
-url_file="/tmp/ngrok.url"
-scope = ['https://spreadsheets.google.com/feeds','https://www.googleapis.com/auth/drive']
-creds = ServiceAccountCredentials.from_json_keyfile_name(join(dirname(realpath(__file__)),google_credential_file), scope)
-client = gspread.authorize(creds)
-sheet = client.open("ngrok1p").sheet1
+from config import GLITCH_URL,GLITCH_KEY,ngrok_token
 
+url_file="/tmp/ngrok.url"
+
+header={'admin_key':GLITCH_KEY}
 
 ngrok.set_auth_token(ngrok_token)
 
@@ -28,12 +23,16 @@ with open(url_file,"w") as f:
     print(url)
     print(ip)
     f.write(url+"\n")
-    sheet.update("A1",new_url)
-    sheet.update("B1",ip)
-    sheet.update("C1",port)
-    sheet.update("D1",datetime.now().strftime("%Y-%m-%d %H:%M:%S"))
+    timestamp=datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+    data={'id':"1",'message':f"{new_url}|{ip}|{port}|{timestamp}"}
+    response=requests.put(f"{GLITCH_URL}/message", data=data, headers=header)
+    success=json.loads(response.content.decode('utf-8'))['success']
 
-print("Successfuly created a tunnel")    
+
+if success:
+    print("Successfuly created a tunnel")
+else:
+    print("Something went wrong")
 ngrok_process =ngrok.get_ngrok_process()
 try:
     ngrok_process.proc.wait()
